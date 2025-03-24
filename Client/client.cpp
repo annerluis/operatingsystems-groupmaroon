@@ -18,7 +18,11 @@
 
 /* Based off of https://github.com/bozkurthan/Simple-TCP-Server-Client-CPP-Example/blob/master/tcp-Client.cpp*/
 
-
+/*
+cd INTO_CPP_FOLDER
+g++ tcp-Client.cpp -o client
+./client 127.0.0.1 8080
+*/
 
 
 

@@ -19,6 +19,13 @@ using namespace std;
 
 /* Based off of https://github.com/bozkurthan/Simple-TCP-Server-Client-CPP-Example/blob/master/tcp-Client.cpp*/
 
+/*
+cd INTO_CPP_FOLDER
+g++ tcp-Server.cpp -o server
+./server 8080
+
+*/
+
 
 //Server side
 int main(int argc, char *argv[])

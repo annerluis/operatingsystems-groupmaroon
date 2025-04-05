@@ -46,6 +46,39 @@ int main() {
         }
     });
 
+
+    svr.Get("/api/getRecipesByTag/:tag", [](const Request& req, Response& res) {
+        lock_guard<mutex> lock(data_mutex);
+
+        cout << req << std::endl;
+
+        json result = json::array();
+
+        try {
+        /*    std::string sql;
+            sql = 'SELECT r.name AS recipeName
+            FROM recipeTags rt
+            JOIN author a ON a.recipeID = rt.recipeID
+            JOIN recipes r ON r.recipeID = a.recipeID
+            WHERE ? IN (rt.tag1, rt.tag2, rt.tag3, rt.tag4, rt.tag5);';
+
+            Table recipeTags = db.getTable("recipeTags");
+            RowResult users = recipeTags.select("username", "password").execute();
+
+            for (Row row : users) {
+                result.push_back({
+                    {"username", std::string(row[0])},
+                    {"password", std::string(row[1])}
+                });
+            }*/
+
+            res.set_content(result.dump(), "application/json");
+        } catch (const mysqlx::Error& err) {
+            res.status = 500;
+            res.set_content(json({{"error", err.what()}}).dump(), "application/json");
+        }
+    });
+
     svr.Get("/", [](const Request& req, Response& res) {
         res.set_content("Welcome to the Recipe API!", "text/plain");
     });

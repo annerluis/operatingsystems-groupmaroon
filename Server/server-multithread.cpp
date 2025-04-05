@@ -17,7 +17,7 @@ using namespace mysqlx;
 mutex data_mutex;
 
 // Connect to MySQL
-Session sess("localhost", 33060, "root", "", "recipe_app"); // Adjust credentials if needed
+Session sess("localhost", 33060, "root", "monthdayyear1Y", "recipe_app"); // Adjust credentials if needed
 Schema db = sess.getSchema("recipe_app");
 
 int main() {
@@ -50,7 +50,15 @@ int main() {
     svr.Get("/api/getRecipesByTag/:tag", [](const Request& req, Response& res) {
         lock_guard<mutex> lock(data_mutex);
 
-        cout << req << std::endl;
+        cout << "Request received:" << endl;
+        cout << "Method: " << req.method << endl;
+        cout << "Path: " << req.path << endl;
+        cout << "Body: " << req.body << endl;
+        cout << "Parameters: " << endl;
+        for (const auto& param : req.params) {
+            cout << param.first << " = " << param.second << endl;
+        }
+
 
         json result = json::array();
 

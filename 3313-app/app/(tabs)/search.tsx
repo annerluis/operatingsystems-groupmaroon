@@ -1,4 +1,16 @@
 import { Image, StyleSheet, Platform } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {
+    View,
+    Text,
+    TextInput,
+    Button,
+    Alert,
+    Modal,
+    TouchableOpacity,
+    FlatList,
+    Dimensions
+} from 'react-native';
 
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -6,8 +18,9 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 
 export default function SearchScreen() {
-  return (
-    <ParallaxScrollView
+
+    return (
+        <ParallaxScrollView
           headerBackgroundColor={{ light: '#D5FFFD', dark: '#D5FFFD' }}
           headerImage={
             <Image
@@ -15,43 +28,41 @@ export default function SearchScreen() {
               style={styles.reactLogo}
             />
           }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
-  );
+          <ThemedView style={styles.titleContainer}>
+            <ThemedText type="title">Search Recipes Here!</ThemedText>
+          </ThemedView>
+          <ThemedView style={styles.stepContainer}>
+            <ThemedText type="subtitle">Hello</ThemedText>
+            <ThemedText>
+              This is a recipe app.
+            </ThemedText>
+            <SearchBar />
+          </ThemedView>
+          <ThemedView style={styles.stepContainer}>
+            <DisplayRecipes />
+          </ThemedView>
+        </ParallaxScrollView>
+      );
+}
+
+function SearchBar (){
+    const [searchInput, setSearchInput] = useState('');
+
+    return (
+        <View>
+            <TextInput style={styles.input} placeholder="Recipe Name" value={searchInput} onChangeText={setSearchInput} />
+        </View>
+    );
+}
+
+function DisplayRecipes (){
+    return (
+        <View>
+            <ThemedText>
+              This is where the results will go.
+            </ThemedText>
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({
@@ -70,6 +81,17 @@ const styles = StyleSheet.create({
       top: 10,
       left: 10,
       position: 'absolute',
+    },
+    input: {
+      width: '100%',
+      height: 50,
+      borderWidth: 1,
+      borderColor: '#ccc',
+      borderRadius: 8,
+      paddingHorizontal: 10,
+      marginBottom: 10,
+      backgroundColor: '#f9f9f9',
+      fontSize: 16,
     },
 });
   

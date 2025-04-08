@@ -1,4 +1,4 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { ThemeProvider, Theme, DefaultTheme } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -10,6 +10,20 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
+
+const FixedTheme: Theme = {
+  ...DefaultTheme, // Ensures required properties are included
+  dark: false, // Disable dark mode
+  colors: {
+    ...DefaultTheme.colors, // Keeps the structure correct
+    primary: '#6200ee',
+    background: '#FFFFFF',
+    card: '#FFFFFF',
+    text: '#000000',
+    border: '#CCCCCC',
+    notification: '#FF4081',
+  },
+};
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -28,12 +42,12 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={FixedTheme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
       </Stack>
-      <StatusBar style="auto" />
+      <StatusBar style="dark" />
     </ThemeProvider>
   );
 }

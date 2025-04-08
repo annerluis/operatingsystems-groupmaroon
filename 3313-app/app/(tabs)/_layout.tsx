@@ -47,14 +47,18 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: '#4287f5',
         headerShown: false,
         tabBarStyle: Platform.select({
           ios: {
             // Use a transparent background on iOS to show the blur effect
             position: 'absolute',
+            backgroundColor: '#D5FFFD',
+              
           },
-          default: {},
+          default: {
+            backgroundColor: '#D5FFFD',
+          }
         }),
       }}>
       <Tabs.Screen

@@ -4,7 +4,6 @@ import {
     View,
     Text,
     TextInput,
-    Button,
     Alert,
     Modal,
     TouchableOpacity,
@@ -12,12 +11,18 @@ import {
     Dimensions
 } from 'react-native';
 
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
+
+
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 
 export default function SearchScreen() {
+
 
     return (
         <ParallaxScrollView
@@ -38,9 +43,6 @@ export default function SearchScreen() {
             </ThemedText>
             <SearchBar />
           </ThemedView>
-          <ThemedView style={styles.stepContainer}>
-            <DisplayRecipes />
-          </ThemedView>
         </ParallaxScrollView>
       );
 }
@@ -48,20 +50,25 @@ export default function SearchScreen() {
 function SearchBar (){
     const [searchInput, setSearchInput] = useState('');
 
-    return (
-        <View>
-            <TextInput style={styles.input} placeholder="Recipe Name" value={searchInput} onChangeText={setSearchInput} />
-        </View>
-    );
-}
+    const displaySearch = () => {
+        alert(searchInput);
 
-function DisplayRecipes (){
+
+    }
+
+
     return (
-        <View>
-            <ThemedText>
-              This is where the results will go.
-            </ThemedText>
-        </View>
+        <InputGroup className="mb-3">
+            <Form.Control
+                placeholder="Recipe Name"
+                aria-label="Recipient's username"
+                aria-describedby="basic-addon2"
+                style={styles.input}
+            />
+            <Button style={styles.button} onClick={displaySearch} variant="outline-secondary" id="button-addon2">
+                Search
+            </Button>
+      </InputGroup>
     );
 }
 
@@ -83,7 +90,7 @@ const styles = StyleSheet.create({
       position: 'absolute',
     },
     input: {
-      width: '100%',
+      width: '80%',
       height: 50,
       borderWidth: 1,
       borderColor: '#ccc',
@@ -93,5 +100,17 @@ const styles = StyleSheet.create({
       backgroundColor: '#f9f9f9',
       fontSize: 16,
     },
+    button: {
+      width: '18%',
+      height: 50,
+      borderWidth: 1,
+      borderColor: '#ccc',
+      borderRadius: 8,
+      paddingHorizontal: 10,
+      marginLeft: '1%',
+      marginBottom: 10,
+      backgroundColor: '#f9f9f9',
+      fontSize: 16,
+    }
 });
   

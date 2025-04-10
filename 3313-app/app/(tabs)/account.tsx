@@ -1,5 +1,5 @@
 import { Image, StyleSheet, Platform } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -21,7 +21,6 @@ import { ThemedView } from '@/components/ThemedView';
 
 import axios from 'axios';
 
-
 const apiClient = axios.create({
   baseURL: 'http://localhost:8080/',
   headers: {
@@ -29,8 +28,151 @@ const apiClient = axios.create({
   },
 });
 
-export default function AccountScreen() {
+
+var userToken = false;
+//var accountType = "";
+
+export { userToken };
+
+// things to disable patient search for admin users
+const AuthContext = createContext<{
+  accountType: string;
+  setAccountType: (type: string) => void;
+}>({ accountType: '', setAccountType: () => {} });
+
+export function useAuth() {
+  return useContext(AuthContext);
+}
+
+export default function TabLayout() {
+  const [lModalVisible, setLModalVisible] = useState(false); //login modal 
+  const [cModalVisible, setCModalVisible] = useState(false); //create account modal
+
+  const [accountType, setAccountType] = useState('');
+  const [userToken, setUserToken] = useState(false);
+
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+
+  const confirmLogout = () => {
+    setUserToken(false);
+
+
+  };
+
+
+
+
+  const login = () => {
+    try {
+      apiClient.post('/login', { username: username, password: password })
+      .then(response => {
+          if (response.data.length === 0) {
+            //setError('No patient data found for this clinician.'); 
+            alert('No account was found');
+          }
+          else {
+            setUserToken(true);
+            alert(response.data); //update state with the patient data
+          }
+        } 
+      );
+    } catch (err) {
+      console.error('Error fetching patient data:', err);
+      setError('Failed to fetch patient data. Please try again.');
+    }
+  }
+
+  
+  
   return (
+    <AuthContext.Provider value={{ accountType, setAccountType }}>
+    <>
+      {userToken == false ? (
+        <ParallaxScrollView
+        headerBackgroundColor={{ light: '#D5FFFD', dark: '#D5FFFD' }}
+        headerImage={
+          <Image
+            source={require('@/assets/images/dish.png')}
+            style={styles.reactLogo}
+          />
+        }>
+        <ThemedView style={styles.titleContainer}>
+          <ThemedText type="title">Login to your account</ThemedText>
+        </ThemedView>
+        <ThemedView style={styles.stepContainer}>
+          <LoginArea />
+        </ThemedView>
+      </ParallaxScrollView>
+      ) : (
+        // User is signed in
+      <>
+      </>
+      )}
+    </>
+    </AuthContext.Provider>
+  );
+}
+
+
+
+
+function LogoutModal({
+  onConfirmLogout,
+  onCancelLogout,
+}: {
+  onConfirmLogout: () => void;
+  onCancelLogout: () => void;
+}) {
+
+  const confirmLogout = async () => {
+    userToken = false;
+
+    onConfirmLogout();
+
+  };
+
+  const confirmCancel = async () => {
+    // userToken = false;
+
+    // onClose();
+
+    // close the logout modal, everything else should stay the same 
+    // setCModalVisible(false);
+
+    onCancelLogout();
+  };
+
+  return (
+    <View style={styles.modalContainer}>
+      <View style={styles.modalContent}>
+        <Text style={styles.modalTitle}>Confirm logout</Text>
+        {/* Buttons */}
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.registerButton} onPress={confirmLogout}>
+            <Text style={styles.buttonText}>Logout</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.cancelButton} onPress={confirmCancel}>
+            <Text style={styles.buttonText}>Cancel</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
+  );
+}
+
+
+
+
+
+
+
+/*export default function AccountScreen() {
+  const [accountType, setAccountType] = useState('');
+  
+  return (
+    <AuthContext.Provider value={{ accountType, setAccountType }}>
       <ParallaxScrollView
         headerBackgroundColor={{ light: '#D5FFFD', dark: '#D5FFFD' }}
         headerImage={
@@ -46,8 +188,9 @@ export default function AccountScreen() {
           <LoginArea />
         </ThemedView>
       </ParallaxScrollView>
+    </AuthContext.Provider>
     );
-}
+}*/
 
 function LoginArea (){
   const [username, setUsername] = useState('');
@@ -56,11 +199,28 @@ function LoginArea (){
 
 
   const login = () => {
-
+    try {
+      apiClient.post('/login', { username: username, password: password })
+      .then(response => {
+          if (response.data.length === 0) {
+            //setError('No patient data found for this clinician.'); 
+            alert('No account was found');
+          }
+          else {
+            loginTrue = true;
+            alert(response.data); //update state with the patient data
+          }
+        } 
+      );
+    } catch (err) {
+      console.error('Error fetching patient data:', err);
+      setError('Failed to fetch patient data. Please try again.');
+    }
   }
 
 
   return (
+    {loginTrue == '' ? (
     <View>
       <InputGroup>
         <TextInput style={styles.input} placeholder="Username" value={password} onChangeText={setPassword} />
@@ -70,11 +230,20 @@ function LoginArea (){
           Login
         </Button>
       </InputGroup>
-      </View>
+    </View>
+  ):(
+    <View>
+      <InputGroup>
+        <TextInput style={styles.input} placeholder="Username" value={password} onChangeText={setPassword} />
+        <TextInput style={styles.input} placeholder="Password" value={username} onChangeText={setUsername} secureTextEntry={true}/>
+
+        <Button style={styles.button} onClick={login} variant="outline-secondary" id="button-addon2">
+          Login
+        </Button>
+      </InputGroup>
+    </View>)}
   );
 }
-
-
 
 
 // Styling

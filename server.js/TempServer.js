@@ -55,3 +55,26 @@ app.post('/getRecipes', (req, res) => {
         }
     });
 });
+
+
+// Will return the recipe name
+app.post('/login', (req, res) => {
+  const { username, password } = req.body;
+
+  const query = `
+    SELECT * 
+    FROM user
+    WHERE username = ?
+    AND password = ?;
+  `;
+
+  con.query(query, [username, password], (error, results) => {
+      if (error) {
+          console.error('Failed to fetch recipes by tag:', error);
+          res.status(500).json({ error: 'Failed to fetch recipes by tag' });
+      } else {
+        console.log(results);
+        res.status(200).json(results);
+      }
+  });
+});

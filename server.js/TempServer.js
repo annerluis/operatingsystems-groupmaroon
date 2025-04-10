@@ -24,7 +24,7 @@ var con = mysql.createConnection({
   //Connecting to SQL server hosting
   host: "localhost", //Change to match Yugabyte information later
   user: "root",
-  password: "",
+  password: "!",
   database: "recipe_app",
 });
 

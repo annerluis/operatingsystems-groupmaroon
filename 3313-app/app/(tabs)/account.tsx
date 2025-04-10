@@ -45,6 +45,54 @@ export function useAuth() {
 }
 
 export default function AccountScreen (){
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [userToken, setUserToken] = useState(false);
+  const [recipeName, setRecipeName] = useState('');
+  const [recipeInstructions, setRecipeInstructions] = useState('');
+
+  const createRecipe = () => {
+    try {
+      apiClient.post('/createNewRecipe', {  username: username, name: recipeName, instructions: recipeInstructions })
+      .then(response => {
+          if (response.data.length === 0) {
+            alert('No account was found');
+          }
+          else {
+            alert(response.data); //update state with the patient data
+          }
+        } 
+      );
+    } catch (err) {
+      console.error('Error fetching patient data:', err);
+    }
+  }
+
+  const logout = () => {
+    setUserToken(false);
+  }
+
+  const login = () => {
+    try {
+      apiClient.post('/login', { username: username, password: password })
+      .then(response => {
+          if (response.data.length === 0) {
+            //setError('No patient data found for this clinician.'); 
+            alert('No account was found');
+          }
+          else {
+            setUserToken(true);
+            alert(response.data); //update state with the patient data
+          }
+        } 
+      );
+    } catch (err) {
+      console.error('Error fetching patient data:', err);
+      setError('Failed to fetch patient data. Please try again.');
+    }
+  }
+
   
   return (
     <ParallaxScrollView
@@ -55,16 +103,41 @@ export default function AccountScreen (){
           style={styles.reactLogo}
         />
       }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Login to your account</ThemedText>
-      </ThemedView>
+      
       <ThemedView style={styles.stepContainer}>
         {userToken == false ? (
-          <LoginArea />
+          <InputGroup>
+            <ThemedView style={styles.titleContainer}>
+              <ThemedText type="title">Login to your account</ThemedText>
+              <Text></Text>
+            </ThemedView>
+
+            <TextInput style={styles.input} placeholder="Username" value={password} onChangeText={setPassword} />
+            <TextInput style={styles.input} placeholder="Password" value={username} onChangeText={setUsername} secureTextEntry={true}/>
+    
+            <Button style={styles.button} onClick={login} variant="outline-secondary" id="button-addon2">
+              Login
+            </Button>
+          </InputGroup>
         ):(
-          <LoginArea />
+          <InputGroup>
+            <ThemedView style={styles.titleContainer}>
+              <ThemedText type="title">Create a Recipe</ThemedText>
+              <Text></Text>
+            </ThemedView>
+
+            <TextInput style={styles.input} placeholder="Recipe Name" value={recipeName} onChangeText={setRecipeName} />
+            <TextInput style={styles.input} placeholder="Instructions" value={recipeInstructions} onChangeText={setRecipeInstructions}/>
+
+            <Button style={styles.button} onClick={createRecipe} variant="outline-secondary" id="button-addon2">
+              Create Recipe
+            </Button>
+
+            <Button style={styles.button} onClick={logout} variant="outline-secondary" id="button-addon2">
+              Logout
+            </Button>
+          </InputGroup>
         )}
-        
       </ThemedView>
     </ParallaxScrollView>
   );
@@ -111,10 +184,10 @@ function LoginArea (){
   );
 }
 
-/*
+
 function CreateArea (){
   const [recipeName, setRecipeName] = useState('');
-  const [recipeInstructions, setrecipeInstructions] = useState('');
+  const [recipeInstructions, setRecipeInstructions] = useState('');
 
   const createRecipe = () => {
     try {
@@ -135,21 +208,29 @@ function CreateArea (){
     }
   }
 
+  const logout = () => {
+    userToken = false;
+  }
+
   return (
     <View>
       <InputGroup>
-        <TextInput style={styles.input} placeholder="Username" value={password} onChangeText={setPassword} />
-        <TextInput style={styles.input} placeholder="Password" value={username} onChangeText={setUsername}/>
+        <TextInput style={styles.input} placeholder="Username" value={recipeName} onChangeText={setRecipeName} />
+        <TextInput style={styles.input} placeholder="Password" value={recipeInstructions} onChangeText={setRecipeInstructions}/>
 
         <Button style={styles.button} onClick={createRecipe} variant="outline-secondary" id="button-addon2">
-          Login
+          Create Recipe
+        </Button>
+
+        <Button style={styles.button} onClick={logout} variant="outline-secondary" id="button-addon2">
+          Logout
         </Button>
       </InputGroup>
     </View>
   );
 }
 
-*/
+
 
 
 /*export default*/ function TabLayout() {

@@ -47,7 +47,6 @@ export default function SearchScreen() {
         <ThemedText type="title">Browse Recipes Here!</ThemedText>
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Hello</ThemedText>
         <SearchBar />
       </ThemedView>
     </ParallaxScrollView>
@@ -60,12 +59,12 @@ function SearchBar (){
   const [recipeData, setRecipeData] = useState([]);
   const [error, setError] = useState('');
 
-  const displaySearch = () => {
+  const displayRecipes = () => {
     setError('');
 
 
     try {
-      apiClient.post('/getRecipes', { recipeName: searchInput })
+      apiClient.get('/getRandomRecipes')
       .then(response => {
           if (response.data.length === 0) {
             setError('No patient data found for this clinician.'); 
@@ -80,7 +79,7 @@ function SearchBar (){
       setError('Failed to fetch patient data. Please try again.');
     }
     
-  }
+  };
 
 
   const showPatientItem = ({ item }) => (
@@ -97,10 +96,8 @@ function SearchBar (){
   return (
     <View>
       <InputGroup>
-        <TextInput style={styles.input} placeholder="Recipe Name" value={searchInput} onChangeText={setSearchInput} />
-
-        <Button style={styles.button} onClick={displaySearch} variant="outline-secondary" id="button-addon2">
-          Search
+        <Button style={styles.button} onClick={displayRecipes} variant="outline-secondary" id="button-addon2">
+          Show Recipes
         </Button>
       </InputGroup>
       {error ? (
@@ -147,13 +144,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   button: {
-    width: '18%',
+    width: '100%',
     height: 50,
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 8,
     paddingHorizontal: 10,
-    marginLeft: '1%',
     marginBottom: 10,
     backgroundColor: '#f9f9f9',
     fontSize: 16,

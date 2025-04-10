@@ -58,6 +58,28 @@ app.post('/getRecipes', (req, res) => {
 
 
 // Will return the recipe name
+app.get('/getRandomRecipes', (req, res) => {
+
+
+  const query = `
+      SELECT * FROM recipes
+      ORDER BY RAND()
+      LIMIT 3;
+  `;
+
+  con.query(query, [], (error, results) => {
+      if (error) {
+          console.error('Failed to fetch recipes by tag:', error);
+          res.status(500).json({ error: 'Failed to fetch recipes by tag' });
+      } else {
+        console.log(results);
+          res.status(200).json(results);
+      }
+  });
+});
+
+
+// Will return the recipe name
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
 

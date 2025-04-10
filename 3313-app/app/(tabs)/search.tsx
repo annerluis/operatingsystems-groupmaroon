@@ -47,10 +47,6 @@ export default function SearchScreen() {
             <ThemedText type="title">Search Recipes Here!</ThemedText>
           </ThemedView>
           <ThemedView style={styles.stepContainer}>
-            <ThemedText type="subtitle">Hello</ThemedText>
-            <ThemedText>
-              This is a recipe app.
-            </ThemedText>
             <SearchBar />
           </ThemedView>
         </ParallaxScrollView>

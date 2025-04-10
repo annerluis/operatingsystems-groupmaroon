@@ -117,57 +117,6 @@ export default function TabLayout() {
 
 
 
-
-function LogoutModal({
-  onConfirmLogout,
-  onCancelLogout,
-}: {
-  onConfirmLogout: () => void;
-  onCancelLogout: () => void;
-}) {
-
-  const confirmLogout = async () => {
-    userToken = false;
-
-    onConfirmLogout();
-
-  };
-
-  const confirmCancel = async () => {
-    // userToken = false;
-
-    // onClose();
-
-    // close the logout modal, everything else should stay the same 
-    // setCModalVisible(false);
-
-    onCancelLogout();
-  };
-
-  return (
-    <View style={styles.modalContainer}>
-      <View style={styles.modalContent}>
-        <Text style={styles.modalTitle}>Confirm logout</Text>
-        {/* Buttons */}
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.registerButton} onPress={confirmLogout}>
-            <Text style={styles.buttonText}>Logout</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.cancelButton} onPress={confirmCancel}>
-            <Text style={styles.buttonText}>Cancel</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </View>
-  );
-}
-
-
-
-
-
-
-
 /*export default function AccountScreen() {
   const [accountType, setAccountType] = useState('');
   
@@ -207,7 +156,7 @@ function LoginArea (){
             alert('No account was found');
           }
           else {
-            loginTrue = true;
+            userToken = true;
             alert(response.data); //update state with the patient data
           }
         } 
@@ -220,7 +169,6 @@ function LoginArea (){
 
 
   return (
-    {loginTrue == '' ? (
     <View>
       <InputGroup>
         <TextInput style={styles.input} placeholder="Username" value={password} onChangeText={setPassword} />
@@ -231,17 +179,6 @@ function LoginArea (){
         </Button>
       </InputGroup>
     </View>
-  ):(
-    <View>
-      <InputGroup>
-        <TextInput style={styles.input} placeholder="Username" value={password} onChangeText={setPassword} />
-        <TextInput style={styles.input} placeholder="Password" value={username} onChangeText={setUsername} secureTextEntry={true}/>
-
-        <Button style={styles.button} onClick={login} variant="outline-secondary" id="button-addon2">
-          Login
-        </Button>
-      </InputGroup>
-    </View>)}
   );
 }
 

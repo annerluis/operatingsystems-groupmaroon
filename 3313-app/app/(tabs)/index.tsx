@@ -46,7 +46,7 @@ export default function BrowseScreen() {
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle">Hello</ThemedText>
         <ThemedText>
-          This is a recipe app.
+        A recipe collection catalogue that allows users to seamlessly view, create, publish, and save recipes with ease. The goal of this catalogue is to simplify the cooking process for users of all skill levels and to make it more accessible. The ability to cater to specific user preferences, review recipes, and filter searches make the program more practical for the average consumer. Essentially, this recipe catalogue aims to become an epicentre of culinary inspiration. 
         </ThemedText>
       </ThemedView>
     </ParallaxScrollView>

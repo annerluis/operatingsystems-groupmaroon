@@ -101,16 +101,16 @@ function SearchBar (){
         </Button>
       </InputGroup>
       {error ? (
-          <Text>{error}</Text>
-        ) : (
-          //display the list of patients
-          <FlatList
-            data={recipeData}
-            renderItem={showPatientItem}
-            keyExtractor={(item) => item.recipeID}
-          />
-        )}
-  </View>
+        <Text>{error}</Text>
+      ) : (
+        //display the list of patients
+        <FlatList
+          data={recipeData}
+          renderItem={showPatientItem}
+          keyExtractor={(item) => item.recipeID}
+        />
+      )}
+    </View>
   );
 }
 

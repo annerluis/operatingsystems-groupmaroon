@@ -60,7 +60,6 @@ app.post('/getRecipes', (req, res) => {
 // Will return the recipe name
 app.get('/getRandomRecipes', (req, res) => {
 
-
   const query = `
       SELECT * FROM recipes
       ORDER BY RAND()
@@ -91,6 +90,32 @@ app.post('/login', (req, res) => {
   `;
 
   con.query(query, [username, password], (error, results) => {
+      if (error) {
+          console.error('Failed to fetch recipes by tag:', error);
+          res.status(500).json({ error: 'Failed to fetch recipes by tag' });
+      } else {
+        console.log(results);
+        res.status(200).json(results);
+      }
+  });
+});
+
+// Will return the recipe name
+app.post('/createNewRecipe', (req, res) => {
+  const { username, name, instructions } = req.body;
+
+  recipeID = Math.floor(Math.random() * 100000); 
+
+  const query = `
+    INSERT INTO recipes VALUES(
+      ?,
+      ?,
+      ?,
+      ?
+    );
+  `;
+
+  con.query(query, [recipeID, name, instructions, username], (error, results) => {
       if (error) {
           console.error('Failed to fetch recipes by tag:', error);
           res.status(500).json({ error: 'Failed to fetch recipes by tag' });

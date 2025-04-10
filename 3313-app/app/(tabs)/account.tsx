@@ -44,7 +44,30 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
-export default function TabLayout() {
+export default function AccountScreen (){
+  return (
+    <ParallaxScrollView
+      headerBackgroundColor={{ light: '#D5FFFD', dark: '#D5FFFD' }}
+      headerImage={
+        <Image
+          source={require('@/assets/images/dish.png')}
+          style={styles.reactLogo}
+        />
+      }>
+      <ThemedView style={styles.titleContainer}>
+        <ThemedText type="title">Login to your account</ThemedText>
+      </ThemedView>
+      <ThemedView style={styles.stepContainer}>
+        <LoginArea />
+      </ThemedView>
+    </ParallaxScrollView>
+  );
+}
+
+
+
+
+/*export default*/ function TabLayout() {
   const [lModalVisible, setLModalVisible] = useState(false); //login modal 
   const [cModalVisible, setCModalVisible] = useState(false); //create account modal
 

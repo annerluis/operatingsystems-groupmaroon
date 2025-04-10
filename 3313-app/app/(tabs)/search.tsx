@@ -70,7 +70,6 @@ function SearchBar (){
       try {
         apiClient.post('/getRecipes', { recipeName: searchInput })
         .then(response => {
-            alert(response);
             if (response.data.length === 0) {
               setError('No patient data found for this clinician.'); 
             }
@@ -90,7 +89,11 @@ function SearchBar (){
     const showPatientItem = ({ item }) => (
       <View>
         {/*display patient details <Text> - Left Eye: {item.recipeID}</Text>*/}
-        <Text> - Name: {item.name}</Text>
+        <ThemedText type="title">{item.name}</ThemedText>
+        <ThemedText type="subtitle">{item.author}</ThemedText>
+          <ThemedText>
+            {item.instructions}
+          </ThemedText>
       </View>
     );
 

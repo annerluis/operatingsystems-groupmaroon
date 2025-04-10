@@ -45,6 +45,7 @@ export function useAuth() {
 }
 
 export default function AccountScreen (){
+  
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#D5FFFD', dark: '#D5FFFD' }}
@@ -58,13 +59,97 @@ export default function AccountScreen (){
         <ThemedText type="title">Login to your account</ThemedText>
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
-        <LoginArea />
+        {userToken == false ? (
+          <LoginArea />
+        ):(
+          <LoginArea />
+        )}
+        
       </ThemedView>
     </ParallaxScrollView>
   );
 }
 
+function LoginArea (){
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
+
+  const login = () => {
+    try {
+      apiClient.post('/login', { username: username, password: password })
+      .then(response => {
+          if (response.data.length === 0) {
+            //setError('No patient data found for this clinician.'); 
+            alert('No account was found');
+          }
+          else {
+            userToken = true;
+            alert(response.data); //update state with the patient data
+          }
+        } 
+      );
+    } catch (err) {
+      console.error('Error fetching patient data:', err);
+      setError('Failed to fetch patient data. Please try again.');
+    }
+  }
+
+
+  return (
+    <View>
+      <InputGroup>
+        <TextInput style={styles.input} placeholder="Username" value={password} onChangeText={setPassword} />
+        <TextInput style={styles.input} placeholder="Password" value={username} onChangeText={setUsername} secureTextEntry={true}/>
+
+        <Button style={styles.button} onClick={login} variant="outline-secondary" id="button-addon2">
+          Login
+        </Button>
+      </InputGroup>
+    </View>
+  );
+}
+
+/*
+function CreateArea (){
+  const [recipeName, setRecipeName] = useState('');
+  const [recipeInstructions, setrecipeInstructions] = useState('');
+
+  const createRecipe = () => {
+    try {
+      apiClient.post('/createNewRecipe', {  username: userToken, name: recipeName, instructions: recipeInstructions })
+      .then(response => {
+          if (response.data.length === 0) {
+            //setError('No patient data found for this clinician.'); 
+            alert('No account was found');
+          }
+          else {
+            userToken = true;
+            alert(response.data); //update state with the patient data
+          }
+        } 
+      );
+    } catch (err) {
+      console.error('Error fetching patient data:', err);
+    }
+  }
+
+  return (
+    <View>
+      <InputGroup>
+        <TextInput style={styles.input} placeholder="Username" value={password} onChangeText={setPassword} />
+        <TextInput style={styles.input} placeholder="Password" value={username} onChangeText={setUsername}/>
+
+        <Button style={styles.button} onClick={createRecipe} variant="outline-secondary" id="button-addon2">
+          Login
+        </Button>
+      </InputGroup>
+    </View>
+  );
+}
+
+*/
 
 
 /*export default*/ function TabLayout() {
@@ -163,47 +248,6 @@ export default function AccountScreen (){
     </AuthContext.Provider>
     );
 }*/
-
-function LoginArea (){
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-
-
-  const login = () => {
-    try {
-      apiClient.post('/login', { username: username, password: password })
-      .then(response => {
-          if (response.data.length === 0) {
-            //setError('No patient data found for this clinician.'); 
-            alert('No account was found');
-          }
-          else {
-            userToken = true;
-            alert(response.data); //update state with the patient data
-          }
-        } 
-      );
-    } catch (err) {
-      console.error('Error fetching patient data:', err);
-      setError('Failed to fetch patient data. Please try again.');
-    }
-  }
-
-
-  return (
-    <View>
-      <InputGroup>
-        <TextInput style={styles.input} placeholder="Username" value={password} onChangeText={setPassword} />
-        <TextInput style={styles.input} placeholder="Password" value={username} onChangeText={setUsername} secureTextEntry={true}/>
-
-        <Button style={styles.button} onClick={login} variant="outline-secondary" id="button-addon2">
-          Login
-        </Button>
-      </InputGroup>
-    </View>
-  );
-}
 
 
 // Styling

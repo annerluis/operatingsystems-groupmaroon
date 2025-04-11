@@ -9,11 +9,13 @@
 using namespace httplib;
 using json = nlohmann::json;
 
+// MySQL connection details (change password if needed)
 const char* HOST = "localhost";
 const char* USER = "root";
-const char* PASS = "root";  // My MySQL password, need to change
+const char* PASS = "root";
 const char* DB = "recipe_app";
 
+// Establish connection to MySQL and return it
 MYSQL* connectToDatabase() {
     MYSQL* conn = mysql_init(nullptr);
     if (!conn) {
@@ -29,6 +31,7 @@ MYSQL* connectToDatabase() {
     return conn;
 }
 
+// Ignores wildcard characters in recipe search input
 std::string escapeWildcards(const std::string& input) {
     std::string result;
     for (char c : input) {
@@ -45,10 +48,12 @@ int main() {
     if (!conn) return 1;
     std::cout << "Connected to MySQL.\n";
 
+    // Check that the server is running
     svr.Get("/", [](const Request&, Response& res) {
         res.set_content("Hello from our server!", "text/plain");
     });
 
+    // Search for recipes by name
     svr.Post("/getRecipes", [conn](const Request& req, Response& res) {
         json body = json::parse(req.body);
         std::string recipeName = body["recipeName"];
@@ -93,6 +98,7 @@ int main() {
 
         mysql_stmt_bind_result(stmt, results);
 
+        // Build JSON response array
         json result = json::array();
         while (mysql_stmt_fetch(stmt) == 0) {
             result.push_back({
@@ -108,6 +114,7 @@ int main() {
         res.set_content(result.dump(), "application/json");
     });
 
+    // Fetch 3 random rows from recipe table
     svr.Get("/getRandomRecipes", [conn](const Request&, Response& res) {
         const char* query = "SELECT * FROM recipes ORDER BY RAND() LIMIT 3";
         if (mysql_query(conn, query)) {
@@ -118,10 +125,10 @@ int main() {
 
         MYSQL_RES* result = mysql_store_result(conn);
         MYSQL_ROW row;
-        json j = json::array();
+        json recipes = json::array();
 
         while ((row = mysql_fetch_row(result))) {
-            j.push_back({
+            recipes.push_back({
                 {"recipeID", std::stoi(row[0])},
                 {"name", row[1]},
                 {"instructions", row[2]},
@@ -130,9 +137,10 @@ int main() {
         }
 
         mysql_free_result(result);
-        res.set_content(j.dump(), "application/json");
+        res.set_content(recipes.dump(), "application/json");
     });
 
+    // Login - verify username and password
     svr.Post("/login", [conn](const Request& req, Response& res) {
         json body = json::parse(req.body);
         std::string username = body["username"];
@@ -167,6 +175,7 @@ int main() {
         mysql_free_result(result);
     });
 
+    // Insert a new recipe into the database
     svr.Post("/createNewRecipe", [conn](const Request& req, Response& res) {
         json body = json::parse(req.body);
         std::string username = body["username"];

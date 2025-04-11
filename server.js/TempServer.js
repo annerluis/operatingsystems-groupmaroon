@@ -24,7 +24,7 @@ var con = mysql.createConnection({
   //Connecting to SQL server hosting
   host: "localhost", //Change to match Yugabyte information later
   user: "root",
-  password: "!",
+  password: "",
   database: "recipe_app",
 });
 
@@ -57,7 +57,7 @@ app.post('/getRecipes', (req, res) => {
 });
 
 
-// Will return the recipe name
+// Will return random recipes
 app.get('/getRandomRecipes', (req, res) => {
 
   const query = `
@@ -78,7 +78,7 @@ app.get('/getRandomRecipes', (req, res) => {
 });
 
 
-// Will return the recipe name
+// login function
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
 
@@ -100,7 +100,7 @@ app.post('/login', (req, res) => {
   });
 });
 
-// Will return the recipe name
+// creates new recipe
 app.post('/createNewRecipe', (req, res) => {
   const { username, name, instructions } = req.body;
 

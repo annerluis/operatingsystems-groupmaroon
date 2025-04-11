@@ -73,17 +73,19 @@ export default function AccountScreen (){
     setUserToken(false);
   }
 
+    
   const login = () => {
     try {
-      apiClient.post('/login', { username: username, password: password })
-      .then(response => {
+        apiClient.post('/login', { username: username, password: password })
+            .then(response => {
+
           if (response.data.length === 0) {
             //setError('No patient data found for this clinician.'); 
             alert('No account was found');
           }
           else {
             setUserToken(true);
-            alert(response.data); //update state with the patient data
+            alert("Successful login!"); //update state with the patient data
           }
         } 
       );
@@ -112,8 +114,8 @@ export default function AccountScreen (){
               <Text></Text>
             </ThemedView>
 
-            <TextInput style={styles.input} placeholder="Username" value={password} onChangeText={setPassword} />
-            <TextInput style={styles.input} placeholder="Password" value={username} onChangeText={setUsername} secureTextEntry={true}/>
+            <TextInput style={styles.input} placeholder="Username" value={username} onChangeText={setUsername} />
+            <TextInput style={styles.input} placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry={true} />
     
             <Button style={styles.button} onClick={login} variant="outline-secondary" id="button-addon2">
               Login

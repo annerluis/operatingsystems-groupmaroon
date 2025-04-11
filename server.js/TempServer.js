@@ -89,15 +89,23 @@ app.post('/login', (req, res) => {
     AND password = ?;
   `;
 
-  con.query(query, [username, password], (error, results) => {
-      if (error) {
-          console.error('Failed to fetch recipes by tag:', error);
-          res.status(500).json({ error: 'Failed to fetch recipes by tag' });
-      } else {
-        console.log(results);
-        res.status(200).json(results);
-      }
-  });
+    if (!username || !password) {
+        return res.status(400).json({ message: 'Username and password are required' });
+    }
+
+    con.query(query, [username, password], (error, results) => {
+        if (error) {
+            console.error('Database query error: ', error);
+            return res.status(500).json({ message: 'Internal server error' });
+        }
+
+        // check if user exists
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'No account found' });
+        }
+
+        return res.status(200).json({ message: 'Login successful', user: results[0] });
+    });
 });
 
 // creates new recipe

@@ -48,13 +48,27 @@ int main() {
     if (!conn) return 1;
     std::cout << "Connected to MySQL.\n";
 
+    // Handle CORS preflight requests
+    svr.Options(".*", [](const Request&, Response& res) {
+        res.set_header("Access-Control-Allow-Origin", "*");
+        res.set_header("Access-Control-Allow-Headers", "Content-Type");
+        res.set_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    });
+
     // Check that the server is running
     svr.Get("/", [](const Request&, Response& res) {
+        res.set_header("Access-Control-Allow-Origin", "*");
+        res.set_header("Access-Control-Allow-Headers", "Content-Type");
+        res.set_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
         res.set_content("Hello from our server!", "text/plain");
     });
 
     // Search for recipes by name
     svr.Post("/getRecipes", [conn](const Request& req, Response& res) {
+        res.set_header("Access-Control-Allow-Origin", "*");
+        res.set_header("Access-Control-Allow-Headers", "Content-Type");
+        res.set_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+        
         json body = json::parse(req.body);
         std::string recipeName = body["recipeName"];
         std::string search = "%" + escapeWildcards(recipeName) + "%";
@@ -116,6 +130,10 @@ int main() {
 
     // Fetch 3 random rows from recipe table
     svr.Get("/getRandomRecipes", [conn](const Request&, Response& res) {
+        res.set_header("Access-Control-Allow-Origin", "*");
+        res.set_header("Access-Control-Allow-Headers", "Content-Type");
+        res.set_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+        
         const char* query = "SELECT * FROM recipes ORDER BY RAND() LIMIT 3";
         if (mysql_query(conn, query)) {
             res.status = 500;
@@ -142,6 +160,10 @@ int main() {
 
     // Login - verify username and password
     svr.Post("/login", [conn](const Request& req, Response& res) {
+        res.set_header("Access-Control-Allow-Origin", "*");
+        res.set_header("Access-Control-Allow-Headers", "Content-Type");
+        res.set_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+        
         json body = json::parse(req.body);
         std::string username = body["username"];
         std::string password = body["password"];
@@ -177,6 +199,10 @@ int main() {
 
     // Insert a new recipe into the database
     svr.Post("/createNewRecipe", [conn](const Request& req, Response& res) {
+        res.set_header("Access-Control-Allow-Origin", "*");
+        res.set_header("Access-Control-Allow-Headers", "Content-Type");
+        res.set_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+        
         json body = json::parse(req.body);
         std::string username = body["username"];
         std::string name = body["name"];

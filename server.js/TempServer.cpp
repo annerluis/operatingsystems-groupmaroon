@@ -222,6 +222,97 @@ int main() {
         }
     });
 
+    // create user account
+    svr.Post("/createAccount", [conn](const Request& req, Response& res) {
+        res.set_header("Access-Control-Allow-Origin", "*");
+        res.set_header("Access-Control-Allow-Headers", "Content-Type");
+        res.set_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+
+        json body = json::parse(req.body);
+        std::string username = body["username"];
+        std::string password = body["password"];
+
+        if (username.empty() || password.empty()) {
+            res.status = 400;
+            res.set_content("{\"message\": \"Username and password are required\"}", "application/json");
+            return;
+        }
+
+        // check if username exists
+        std::string checkQuery = "SELECT * FROM user WHERE username = ?";
+        MYSQL_STMT* checkStmt = mysql_stmt_init(conn);
+        mysql_stmt_prepare(checkStmt, checkQuery.c_str(), checkQuery.length());
+
+        MYSQL_BIND checkParam[1];
+        memset(checkParam, 0, sizeof(checkParam));
+        checkParam[0].buffer_type = MYSQL_TYPE_STRING;
+        checkParam[0].buffer = (void*)username.c_str();
+        checkParam[0].buffer_length = username.length();
+
+        mysql_stmt_bind_param(checkStmt, checkParam);
+        mysql_stmt_execute(checkStmt);
+
+        MYSQL_RES* checkResult = mysql_stmt_result_metadata(checkStmt);
+        if (checkResult) {
+            MYSQL_ROW row;
+            MYSQL_BIND resultBind[2];
+            char existingUsername[100];
+            char existingPassword[100];
+            memset(resultBind, 0, sizeof(resultBind));
+
+            resultBind[0].buffer_type = MYSQL_TYPE_STRING;
+            resultBind[0].buffer = existingUsername;
+            resultBind[0].buffer_length = sizeof(existingUsername);
+
+            resultBind[1].buffer_type = MYSQL_TYPE_STRING;
+            resultBind[1].buffer = existingPassword;
+            resultBind[1].buffer_length = sizeof(existingPassword);
+
+            mysql_stmt_bind_result(checkStmt, resultBind);
+
+            if (mysql_stmt_fetch(checkStmt) == 0) {
+                // if user name exists
+                res.status = 409;
+                res.set_content("{\"message\": \"Username already exists\"}", "application/json");
+                mysql_free_result(checkResult);
+                mysql_stmt_close(checkStmt);
+                return;
+            }
+
+            mysql_free_result(checkResult);
+        }
+        mysql_stmt_close(checkStmt);
+
+        // insert a new account 
+        std::string insertQuery = "INSERT INTO user (username, password) VALUES (?, ?)";
+        MYSQL_STMT* insertStmt = mysql_stmt_init(conn);
+        mysql_stmt_prepare(insertStmt, insertQuery.c_str(), insertQuery.length());
+
+        MYSQL_BIND insertParams[2];
+        memset(insertParams, 0, sizeof(insertParams));
+
+        insertParams[0].buffer_type = MYSQL_TYPE_STRING;
+        insertParams[0].buffer = (void*)username.c_str();
+        insertParams[0].buffer_length = username.length();
+
+        insertParams[1].buffer_type = MYSQL_TYPE_STRING;
+        insertParams[1].buffer = (void*)password.c_str();
+        insertParams[1].buffer_length = password.length();
+
+        mysql_stmt_bind_param(insertStmt, insertParams);
+
+        if (mysql_stmt_execute(insertStmt)) {
+            std::cerr << "Failed to create account: " << mysql_error(conn) << "\n";
+            res.status = 500;
+            res.set_content("{\"message\": \"Failed to create account\"}", "application/json");
+        } else {
+            res.status = 201;
+            res.set_content("{\"message\": \"Account created successfully\"}", "application/json");
+        }
+
+        mysql_stmt_close(insertStmt);
+    });
+
     std::cout << "Server running at http://localhost:8080\n";
     svr.listen("0.0.0.0", 8080);
 

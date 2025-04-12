@@ -75,25 +75,50 @@ export default function AccountScreen (){
 
     
   const login = () => {
-    try {
-        apiClient.post('/login', { username: username, password: password })
-            .then(response => {
+    apiClient.post('/login', { username: username, password: password })
+        .then(response => {
+            if (response.data && response.data.user) {
+                setUserToken(true);
+                alert("Successful login!");
+            } else {
+                alert('No account was found');
+            }
+        })
+        .catch(error => {
+            if (error.response) {
+                if (error.response.status === 404) {
+                    alert('Invalid username or password');
+                } else {
+                    alert('An error occurred. Please try again.');
+                }
+            } else {
+                alert('Network error');
+            }
+            console.error('Error logging in:', error);
+        });
+};
 
-          if (response.data.length === 0) {
-            //setError('No patient data found for this clinician.'); 
-            alert('No account was found');
-          }
-          else {
-            setUserToken(true);
-            alert("Successful login!"); //update state with the patient data
-          }
-        } 
-      );
-    } catch (err) {
-      console.error('Error fetching patient data:', err);
-      setError('Failed to fetch patient data. Please try again.');
-    }
-  }
+
+    const createAccount = () => {
+        if (!username || !password) {
+            alert('Please fill in both fields');
+            return;
+        }
+
+        apiClient.post('/createAccount', { username, password })
+            .then(response => {
+                alert(response.data.message);
+                setUserToken(true);
+            })
+            .catch(error => {
+                if (error.response) {
+                    alert(error.response.data.message); // show errors
+                } else {
+                    alert('Failed to create account');
+                    console.error(error);
+                }
+            });
+    };
 
   
   return (
@@ -105,40 +130,83 @@ export default function AccountScreen (){
           style={styles.reactLogo}
         />
       }>
-      
+
       <ThemedView style={styles.stepContainer}>
-        {userToken == false ? (
+        {userToken === false ? (
           <InputGroup>
             <ThemedView style={styles.titleContainer}>
-              <ThemedText type="title">Login to your account</ThemedText>
+              <ThemedText type="title">Login or Create Account</ThemedText>
               <Text></Text>
             </ThemedView>
 
-            <TextInput style={styles.input} placeholder="Username" value={username} onChangeText={setUsername} />
-            <TextInput style={styles.input} placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry={true} />
-    
-            <Button style={styles.button} onClick={login} variant="outline-secondary" id="button-addon2">
-              Login
-            </Button>
-          </InputGroup>
-        ):(
-          <InputGroup>
-            <ThemedView style={styles.titleContainer}>
-              <ThemedText type="title">Create a Recipe</ThemedText>
-              <Text></Text>
-            </ThemedView>
+                <TextInput
+                    style={styles.input}
+                    placeholder="Username"
+                    value={username}
+                    onChangeText={setUsername}
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Password"
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry={true}
+                />
 
-            <TextInput style={styles.input} placeholder="Recipe Name" value={recipeName} onChangeText={setRecipeName} />
-            <TextInput style={styles.input} placeholder="Instructions" value={recipeInstructions} onChangeText={setRecipeInstructions}/>
+                <Button
+                    style={styles.button}
+                    onClick={login}
+                    variant="outline-secondary"
+                >
+                    Login
+                </Button>
 
-            <Button style={styles.button} onClick={createRecipe} variant="outline-secondary" id="button-addon2">
-              Create Recipe
-            </Button>
+                <Button
+                    style={styles.button}
+                    onClick={createAccount}
+                    variant="outline-secondary"
+                >
+                    Create Account
+                </Button>
+            </InputGroup>
+        ) : (
+            <InputGroup>
+                <ThemedView style={styles.titleContainer}>
+                    <ThemedText type="title">Create a Recipe</ThemedText>
+                    <Text></Text>
+                </ThemedView>
 
-            <Button style={styles.button} onClick={logout} variant="outline-secondary" id="button-addon2">
-              Logout
-            </Button>
-          </InputGroup>
+                <TextInput
+                    style={styles.input}
+                    placeholder="Recipe Name"
+                    value={recipeName}
+                    onChangeText={setRecipeName}
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Instructions"
+                    value={recipeInstructions}
+                    onChangeText={setRecipeInstructions}
+                />
+
+                <Button
+                    style={styles.button}
+                    onClick={createRecipe}
+                    variant="outline-secondary"
+                    id="button-addon2"
+                >
+                    Create Recipe
+                </Button>
+
+                <Button
+                    style={styles.button}
+                    onClick={logout}
+                    variant="outline-secondary"
+                    id="button-addon2"
+                >
+                    Logout
+                </Button>
+            </InputGroup>
         )}
       </ThemedView>
     </ParallaxScrollView>

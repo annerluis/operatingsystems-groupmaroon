@@ -101,7 +101,7 @@ app.post('/login', (req, res) => {
 
         // check if user exists
         if (results.length === 0) {
-            return res.status(404).json({ message: 'No account found' });
+            return res.status(404).json({ message: 'Invalid username or password' });
         }
 
         return res.status(200).json({ message: 'Login successful', user: results[0] });
@@ -132,4 +132,44 @@ app.post('/createNewRecipe', (req, res) => {
         res.status(200).json(results);
       }
   });
+});
+
+// create account
+app.post('/createAccount', (req, res) => {
+    const { username, password} = req.body;
+
+    if (!username || !password ) {
+        return res.status(400).json({ message: 'Username and password are required' });
+    }
+
+    const checkQuery = `
+    SELECT * 
+    FROM user
+    WHERE username = ?;
+  `;
+
+    con.query(checkQuery, [username], (error, results) => {
+        if (error) {
+            console.error('Database query error:', error);
+            return res.status(500).json({ message: 'Internal server error' });
+        }
+
+        if (results.length > 0) {
+            return res.status(409).json({ message: 'Username or email already exists' });
+        }
+
+        const query = `
+          INSERT INTO user (username, password)
+          VALUES (?, ?);
+        `;
+
+        con.query(query, [username, password], (error, results) => {
+            if (error) {
+                console.error('Failed to create account:', error);
+                return res.status(500).json({ message: 'Failed to create account' });
+            }
+
+            res.status(201).json({ message: 'Account created successfully' });
+        });
+    });
 });
